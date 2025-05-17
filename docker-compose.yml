@@ -1,0 +1,34 @@
+services:
+  webhookbenchmark:
+    image: ghcr.io/eewbot/webhook-benchmark:v0.1.0
+    hostname: webhookbenchmark
+    container_name: webhookbenchmark__webhookbenchmark
+    restart: unless-stopped
+
+    environment:
+      LISTEN: 0.0.0.0:3000
+      REPORT_IN: ${REPORT_IN}
+      REPORT_INTERVAL: ${REPORT_INTERVAL}
+      MESSAGE: ${MESSAGE}
+      TARGETS: /etc/targets
+      SEND_INTERVAL: ${SEND_INTERVAL}
+
+    command: /usr/bin/webhook-benchmark
+
+    volumes:
+      - type: bind
+        source: ./targets
+        target: /etc/targets
+        read_only:  true
+
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+
+    networks:
+      - default
+
+networks:
+  default:
+    name: webhookbenchmark__default
